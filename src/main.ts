@@ -44,14 +44,13 @@ export function statement(invoice: Invoice, plays: any) {
   }).format;
 
   for (let perf of invoice.performances) {
-    const play = playFor(perf);
-    let thisAmount = amountFor(play, perf);
+    let thisAmount = amountFor(playFor(perf), perf);
 
     volumeCredits += Math.max(perf.audience - 30, 0);
 
-    if ("comedy" == play.type) volumeCredits += Math.floor(perf.audience / 5);
+    if ("comedy" == playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
 
-    result += ` ${play.name}: ${format(thisAmount / 100)} (${
+    result += ` ${playFor(perf).name}: ${format(thisAmount / 100)} (${
       perf.audience
     } seats)\n`;
     totalAmount += thisAmount;
