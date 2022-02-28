@@ -3,10 +3,36 @@ import invoices from "./data/invoices.json";
 import { Invoice, Performance, Play } from "./types";
 
 export function statement(invoice: Invoice, plays: any) {
+  let totalAmount = 0;
+  let volumeCredits = 0;
+  let result = `Statement for ${invoice.customer}\n`;
+  const format = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  }).format;
+
+  for (let perf of invoice.performances) {
+    let thisAmount = amountFor(perf);
+
+    volumeCredits += Math.max(perf.audience - 30, 0);
+
+    if ("comedy" == playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
+
+    result += ` ${playFor(perf).name}: ${format(thisAmount / 100)} (${
+      perf.audience
+    } seats)\n`;
+    totalAmount += thisAmount;
+  }
+
+  result += `Amount owed is ${format(totalAmount / 100)}\n`;
+  result += `You earned ${volumeCredits} credits\n`;
+  return result;
+
   // EXTRACTED FUNCTIONS
-  function amountFor(play: Play, aPerformance: Performance) {
+  function amountFor(aPerformance: Performance) {
     let result = 0;
-    switch (play.type) {
+    switch (playFor(aPerformance).type) {
       case "tragedy":
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -23,7 +49,7 @@ export function statement(invoice: Invoice, plays: any) {
         break;
 
       default:
-        throw new Error(`Unknown type: ${play.type}`);
+        throw new Error(`Unknown type: ${playFor(aPerformance).type}`);
     }
 
     return result;
@@ -34,31 +60,6 @@ export function statement(invoice: Invoice, plays: any) {
   }
 
   // END OF EXTRACTED FUNCTIONS
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
-  const format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format;
-
-  for (let perf of invoice.performances) {
-    let thisAmount = amountFor(playFor(perf), perf);
-
-    volumeCredits += Math.max(perf.audience - 30, 0);
-
-    if ("comedy" == playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
-
-    result += ` ${playFor(perf).name}: ${format(thisAmount / 100)} (${
-      perf.audience
-    } seats)\n`;
-    totalAmount += thisAmount;
-  }
-
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
-  return result;
 }
 
 console.log(statement(invoices[0], plays));
