@@ -1,21 +1,11 @@
 import plays from "./data/plays.json";
 import invoices from "./data/invoices.json";
-import { Invoice, Play } from "./types";
+import { Invoice, Performance, Play } from "./types";
 
 export function statement(invoice: Invoice, plays: any) {
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
-  const format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format;
-
-  for (let perf of invoice.performances) {
-    const play: Play = plays[perf.playID];
+  // EXTRACTED FUNCTIONS
+  function amountFor(play: Play, perf: Performance) {
     let thisAmount = 0;
-
     switch (play.type) {
       case "tragedy":
         thisAmount = 40000;
@@ -36,6 +26,25 @@ export function statement(invoice: Invoice, plays: any) {
         throw new Error(`Unknown type: ${play.type}`);
     }
 
+    return thisAmount;
+  }
+
+  // END OF EXTRACTED FUNCTIONS
+  let totalAmount = 0;
+  let volumeCredits = 0;
+  let result = `Statement for ${invoice.customer}\n`;
+  const format = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  }).format;
+
+  for (let perf of invoice.performances) {
+    const play: Play = plays[perf.playID];
+    let thisAmount = 0;
+
+    thisAmount += amountFor(play, perf);
+
     volumeCredits += Math.max(perf.audience - 30, 0);
 
     if ("comedy" == play.type) volumeCredits += Math.floor(perf.audience / 5);
@@ -52,7 +61,3 @@ export function statement(invoice: Invoice, plays: any) {
 }
 
 console.log(statement(invoices[0], plays));
-
-// const app = document.querySelector<HTMLDivElement>("#app")!;
-
-// app.innerHTML = ``;
