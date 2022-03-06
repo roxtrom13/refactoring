@@ -3,15 +3,15 @@ import invoices from "./data/invoices.json";
 import { Invoice, Performance, Play } from "./types";
 
 export function statement(invoice: Invoice, plays: any) {
-  let totalAmount = 0;
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
     result += ` ${playFor(perf).name}: ${toUSD(amountFor(perf))} (${
       perf.audience
     } seats)\n`;
-    totalAmount += amountFor(perf);
   }
+
+  let totalAmount = appleSauce()
 
   result += `Amount owed is ${toUSD(totalAmount)}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
@@ -69,6 +69,14 @@ export function statement(invoice: Invoice, plays: any) {
       result += volumeCreditsFor(perf);
     }
     return result;
+  }
+
+  function appleSauce () {
+    let totalAmount = 0;
+    for (let perf of invoice.performances) {
+      totalAmount += amountFor(perf);
+    }
+    return totalAmount;
   }
 
   // END OF EXTRACTED FUNCTIONS
