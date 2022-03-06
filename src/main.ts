@@ -10,13 +10,13 @@ export function statement(invoice: Invoice, plays: any) {
   for (let perf of invoice.performances) {
     volumeCredits += volumeCreditsFor(perf);
 
-    result += ` ${playFor(perf).name}: ${format(amountFor(perf) / 100)} (${
+    result += ` ${playFor(perf).name}: ${toUSD(amountFor(perf) / 100)} (${
       perf.audience
     } seats)\n`;
     totalAmount += amountFor(perf);
   }
 
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
+  result += `Amount owed is ${toUSD(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
 
@@ -58,7 +58,7 @@ export function statement(invoice: Invoice, plays: any) {
     return result;
   }
 
-  function format (aNumber: number) {
+  function toUSD (aNumber: number) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
