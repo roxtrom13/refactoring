@@ -11,9 +11,7 @@ export function statement(invoice: Invoice, plays: any) {
     } seats)\n`;
   }
 
-  let totalAmount = appleSauce()
-
-  result += `Amount owed is ${toUSD(totalAmount)}\n`;
+  result += `Amount owed is ${toUSD(appleSauce())}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
   return result;
 
