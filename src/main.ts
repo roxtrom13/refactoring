@@ -12,6 +12,7 @@ export function statement(invoice: Invoice, plays: any) {
     const result: any = Object.assign({}, aPerformance);
     result.play = playFor(result);
     result.amount = amountFor(result);
+    result.volumeCredits = volumeCreditsFor(result);
     return result;
   }
 
@@ -44,6 +45,14 @@ export function statement(invoice: Invoice, plays: any) {
     return result;
   }
 
+  function volumeCreditsFor(aPerformance: EnrichedPerformance): number {
+    let result = 0;
+    result += Math.max(aPerformance.audience - 30, 0);
+    if ("comedy" == aPerformance.play.type)
+      result += Math.floor(aPerformance.audience / 5);
+    return result;
+  }
+
 }
 
 export function renderPlainText(data: any) {
@@ -60,14 +69,6 @@ export function renderPlainText(data: any) {
   return result;
 
   // EXTRACTED FUNCTIONS
-  function volumeCreditsFor(aPerformance: EnrichedPerformance): number {
-    let result = 0;
-    result += Math.max(aPerformance.audience - 30, 0);
-    if ("comedy" == aPerformance.play.type)
-      result += Math.floor(aPerformance.audience / 5);
-    return result;
-  }
-
   function toUSD(aNumber: number) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -79,7 +80,7 @@ export function renderPlainText(data: any) {
   function totalVolumeCredits() {
     let result = 0;
     for (let perf of data.performances) {
-      result += volumeCreditsFor(perf);
+      result += perf.volumeCredits;
     }
     return result;
   }
