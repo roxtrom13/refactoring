@@ -8,6 +8,10 @@ export interface Performance {
   audience: number;
 }
 
+export interface EnrichedPerformance extends Performance {
+  play: Play,
+}
+
 export interface Invoice {
   customer: string;
   performances: Array<Performance>;
