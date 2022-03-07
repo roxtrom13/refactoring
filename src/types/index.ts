@@ -21,7 +21,3 @@ export interface Play {
   name: string;
   type: PlayType | string;
 }
-
-export interface Plays {
-  key: Play;
-}
