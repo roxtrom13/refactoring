@@ -6,6 +6,8 @@ export function statement(invoice: Invoice, plays: any) {
   const statementData = {} as any;
   statementData.customer = invoice.customer;
   statementData.performances = invoice.performances.map(enrichPerformance);
+  statementData.totalAmount = totalAmount(statementData);
+  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
   return renderPlainText(statementData);
 
   function enrichPerformance(aPerformance: Performance) {
@@ -53,6 +55,22 @@ export function statement(invoice: Invoice, plays: any) {
     return result;
   }
 
+  function totalVolumeCredits(data: any) {
+    let result = 0;
+    for (let perf of data.performances) {
+      result += perf.volumeCredits;
+    }
+    return result;
+  }
+
+  function totalAmount(data: any) {
+    let result = 0;
+    for (let perf of data.performances) {
+      result += perf.amount;
+    }
+    return result;
+  }
+
 }
 
 export function renderPlainText(data: any) {
@@ -64,8 +82,8 @@ export function renderPlainText(data: any) {
     } seats)\n`;
   }
 
-  result += `Amount owed is ${toUSD(totalAmount())}\n`;
-  result += `You earned ${totalVolumeCredits()} credits\n`;
+  result += `Amount owed is ${toUSD(data.totalAmount)}\n`;
+  result += `You earned ${data.totalVolumeCredits} credits\n`;
   return result;
 
   // EXTRACTED FUNCTIONS
@@ -75,22 +93,6 @@ export function renderPlainText(data: any) {
       currency: "USD",
       minimumFractionDigits: 2,
     }).format(aNumber / 100);
-  }
-
-  function totalVolumeCredits() {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
-  }
-
-  function totalAmount() {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.amount;
-    }
-    return result;
   }
 
   // END OF EXTRACTED FUNCTIONS
