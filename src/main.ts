@@ -41,7 +41,6 @@ export function statement(invoice: Invoice, plays: any) {
     return result;
   }
 
-
   function playFor(aPerformance: Performance): Play {
     return plays[aPerformance.playID];
   }
@@ -49,16 +48,17 @@ export function statement(invoice: Invoice, plays: any) {
   function volumeCreditsFor(aPerformance: Performance): number {
     let result = 0;
     result += Math.max(aPerformance.audience - 30, 0);
-    if ("comedy" == playFor(aPerformance).type) result += Math.floor(aPerformance.audience / 5);
+    if ("comedy" == playFor(aPerformance).type)
+      result += Math.floor(aPerformance.audience / 5);
     return result;
   }
 
-  function toUSD (aNumber: number) {
+  function toUSD(aNumber: number) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
-    }).format(aNumber/100);
+    }).format(aNumber / 100);
   }
 
   function totalVolumeCredits() {
@@ -69,7 +69,7 @@ export function statement(invoice: Invoice, plays: any) {
     return result;
   }
 
-  function totalAmount () {
+  function totalAmount() {
     let result = 0;
     for (let perf of invoice.performances) {
       result += amountFor(perf);
