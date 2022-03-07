@@ -3,12 +3,16 @@ import invoices from "./data/invoices.json";
 import { Invoice, Performance, Play, EnrichedPerformance } from "./types";
 
 export function statement(invoice: Invoice, plays: any) {
+  return renderPlainText(createStatementData(invoice, plays));
+}
+
+export function createStatementData(invoice: Invoice, plays: any) {
   const statementData = {} as any;
   statementData.customer = invoice.customer;
   statementData.performances = invoice.performances.map(enrichPerformance);
   statementData.totalAmount = totalAmount(statementData);
   statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-  return renderPlainText(statementData);
+  return statementData;
 
   function enrichPerformance(aPerformance: Performance) {
     const result: any = Object.assign({}, aPerformance);
