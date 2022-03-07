@@ -3,9 +3,16 @@ import invoices from "./data/invoices.json";
 import { Invoice, Performance, Play } from "./types";
 
 export function statement(invoice: Invoice, plays: any) {
-  let result = `Statement for ${invoice.customer}\n`;
+  const statementData = {} as any;
+  statementData.customer = invoice.customer;
+  statementData.performances = invoice.performances;
+  return renderPlainText(statementData, plays);
+}
 
-  for (let perf of invoice.performances) {
+export function renderPlainText(data: any, plays: any) {
+  let result = `Statement for ${data.customer}\n`;
+
+  for (let perf of data.performances) {
     result += ` ${playFor(perf).name}: ${toUSD(amountFor(perf))} (${
       perf.audience
     } seats)\n`;
@@ -63,7 +70,7 @@ export function statement(invoice: Invoice, plays: any) {
 
   function totalVolumeCredits() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += volumeCreditsFor(perf);
     }
     return result;
@@ -71,7 +78,7 @@ export function statement(invoice: Invoice, plays: any) {
 
   function totalAmount() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += amountFor(perf);
     }
     return result;
