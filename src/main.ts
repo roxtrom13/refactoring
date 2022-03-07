@@ -10,7 +10,8 @@ export function statement(invoice: Invoice, plays: any) {
 
   function enrichPerformance(aPerformance: Performance) {
     const result: any = Object.assign({}, aPerformance);
-    result.play = playFor(aPerformance);
+    result.play = playFor(result);
+    result.amount = amountFor(result);
     return result;
   }
 
@@ -18,22 +19,6 @@ export function statement(invoice: Invoice, plays: any) {
     return plays[aPerformance.playID];
   }
 
-}
-
-export function renderPlainText(data: any) {
-  let result = `Statement for ${data.customer}\n`;
-
-  for (let perf of data.performances) {
-    result += ` ${perf.play.name}: ${toUSD(amountFor(perf))} (${
-      perf.audience
-    } seats)\n`;
-  }
-
-  result += `Amount owed is ${toUSD(totalAmount())}\n`;
-  result += `You earned ${totalVolumeCredits()} credits\n`;
-  return result;
-
-  // EXTRACTED FUNCTIONS
   function amountFor(aPerformance: EnrichedPerformance) {
     let result = 0;
     switch (aPerformance.play.type) {
@@ -59,6 +44,22 @@ export function renderPlainText(data: any) {
     return result;
   }
 
+}
+
+export function renderPlainText(data: any) {
+  let result = `Statement for ${data.customer}\n`;
+
+  for (let perf of data.performances) {
+    result += ` ${perf.play.name}: ${toUSD(perf.amount)} (${
+      perf.audience
+    } seats)\n`;
+  }
+
+  result += `Amount owed is ${toUSD(totalAmount())}\n`;
+  result += `You earned ${totalVolumeCredits()} credits\n`;
+  return result;
+
+  // EXTRACTED FUNCTIONS
   function volumeCreditsFor(aPerformance: EnrichedPerformance): number {
     let result = 0;
     result += Math.max(aPerformance.audience - 30, 0);
@@ -86,7 +87,7 @@ export function renderPlainText(data: any) {
   function totalAmount() {
     let result = 0;
     for (let perf of data.performances) {
-      result += amountFor(perf);
+      result += perf.amount;
     }
     return result;
   }
