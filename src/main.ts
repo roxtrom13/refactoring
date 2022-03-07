@@ -56,21 +56,14 @@ export function statement(invoice: Invoice, plays: any) {
   }
 
   function totalVolumeCredits(data: any) {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
+    return data.performances
+      .reduce((total: any, p: any) => total + p.volumeCredits, 0);
   }
 
   function totalAmount(data: any) {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.amount;
-    }
-    return result;
+    return data.performances
+      .reduce((total: number, p: any) => total + p.amount, 0);
   }
-
 }
 
 export function renderPlainText(data: any) {
