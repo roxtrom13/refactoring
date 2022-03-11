@@ -6,7 +6,7 @@ import { Invoice } from "./types";
 const app = document.querySelector<HTMLDivElement>('#app')!
 
 window.onload = function() {
-  what()
+  what();
   function what() {
     app.innerHTML = htmlStatement(invoices[0], plays);
   }
