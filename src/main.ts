@@ -5,7 +5,12 @@ import { Invoice } from "./types";
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
-app.innerHTML = htmlStatement(invoices[0], plays);
+window.onload = function() {
+  what()
+  function what() {
+    app.innerHTML = htmlStatement(invoices[0], plays);
+  }
+}
 
 export function statement(invoice: Invoice, plays: any) {
   return renderPlainText(createStatementData(invoice, plays));
