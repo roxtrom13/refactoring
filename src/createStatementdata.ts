@@ -20,25 +20,8 @@ class PerformanceCalculator {
     this.play = aPlay;
   }
 
-  get amount() {
-    let result = 0;
-    switch (this.play.type) {
-      case "tragedy":
-        throw "bad thing";
-
-      case "comedy":
-        result = 30000;
-        if (this.performance.audience > 20) {
-          result += 10000 + 500 * (this.performance.audience - 20);
-        }
-        result += 300 * this.performance.audience;
-        break;
-
-      default:
-        throw new Error(`Unknown type: ${this.play.type}`);
-    }
-
-    return result;
+  get amount(): number {
+    throw new Error("Subclass responsability");
   }
 
   get volumeCredits() {
@@ -60,7 +43,16 @@ class TragedyCalculator extends PerformanceCalculator {
   }
 }
 
-class ComedyCalculator extends PerformanceCalculator {}
+class ComedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 30000;
+    if (this.performance.audience > 20) {
+      result += 10000 + 500 * (this.performance.audience - 20);
+    }
+    result += 300 * this.performance.audience;
+    return result;
+  }
+}
 
 export default function createStatementData(invoice: Invoice, plays: any) {
   const result = {} as any;
