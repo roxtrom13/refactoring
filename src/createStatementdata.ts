@@ -1,5 +1,15 @@
 import { Invoice, Play, Performance, EnrichedPerformance } from "./types/";
 
+class PerformanceCalculator {
+  performance: Performance;
+  play: Play;
+
+  constructor(aPerformance: Performance, aPlay: Play) {
+    this.performance = aPerformance;
+    this.play = aPlay;
+  }
+}
+
 export default function createStatementData(invoice: Invoice, plays: any) {
   const result = {} as any;
   result.customer = invoice.customer;
@@ -10,7 +20,8 @@ export default function createStatementData(invoice: Invoice, plays: any) {
 
   function enrichPerformance(aPerformance: Performance) {
     const result: any = Object.assign({}, aPerformance);
-    result.play = playFor(result);
+    const calculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
+    result.play = calculator.play;
     result.amount = amountFor(result);
     result.volumeCredits = volumeCreditsFor(result);
     return result;
