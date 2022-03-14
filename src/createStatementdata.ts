@@ -1,7 +1,14 @@
 import { Invoice, Play, Performance, EnrichedPerformance } from "./types/";
 
 function createPerformanceCalculator(aPerformance: Performance, aPlay: Play) {
-  return new PerformanceCalculator(aPerformance, aPlay);
+  switch (aPlay.type) {
+    case "tragedy":
+      return new TragedyCalculator(aPerformance, aPlay);
+    case "comedy":
+      return new ComedyCalculator(aPerformance, aPlay);
+    default:
+      throw new Error(`Unknown type: ${aPlay.type}`);
+  }
 }
 
 class PerformanceCalculator {
@@ -17,11 +24,7 @@ class PerformanceCalculator {
     let result = 0;
     switch (this.play.type) {
       case "tragedy":
-        result = 40000;
-        if (this.performance.audience > 30) {
-          result += 1000 * (this.performance.audience - 30);
-        }
-        break;
+        throw "bad thing";
 
       case "comedy":
         result = 30000;
@@ -45,8 +48,19 @@ class PerformanceCalculator {
       result += Math.floor(this.performance.audience / 5);
     return result;
   }
-
 }
+
+class TragedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 40000;
+    if (this.performance.audience > 30) {
+      result += 1000 * (this.performance.audience - 30);
+    }
+    return result;
+  }
+}
+
+class ComedyCalculator extends PerformanceCalculator {}
 
 export default function createStatementData(invoice: Invoice, plays: any) {
   const result = {} as any;
@@ -57,7 +71,10 @@ export default function createStatementData(invoice: Invoice, plays: any) {
   return result;
 
   function enrichPerformance(aPerformance: Performance): EnrichedPerformance {
-    const calculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
+    const calculator = createPerformanceCalculator(
+      aPerformance,
+      playFor(aPerformance)
+    );
     const result: any = Object.assign({}, aPerformance);
     result.play = calculator.play;
     result.amount = calculator.amount;
@@ -82,13 +99,16 @@ export default function createStatementData(invoice: Invoice, plays: any) {
   // }
 
   function totalVolumeCredits(data: any) {
-    return data.performances
-      .reduce((total: any, p: any) => total + p.volumeCredits, 0);
+    return data.performances.reduce(
+      (total: any, p: any) => total + p.volumeCredits,
+      0
+    );
   }
 
   function totalAmount(data: any) {
-    return data.performances
-      .reduce((total: number, p: any) => total + p.amount, 0);
+    return data.performances.reduce(
+      (total: number, p: any) => total + p.amount,
+      0
+    );
   }
 }
-
