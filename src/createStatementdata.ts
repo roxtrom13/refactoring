@@ -80,18 +80,6 @@ export default function createStatementData(invoice: Invoice, plays: any) {
     return plays[aPerformance.playID];
   }
 
-  // function amountFor(aPerformance: EnrichedPerformance) {
-  //   return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amount;
-  // }
-
-  // function volumeCreditsFor(aPerformance: EnrichedPerformance): number {
-  //   let result = 0;
-  //   result += Math.max(aPerformance.audience - 30, 0);
-  //   if ("comedy" == aPerformance.play.type)
-  //     result += Math.floor(aPerformance.audience / 5);
-  //   return result;
-  // }
-
   function totalVolumeCredits(data: any) {
     return data.performances.reduce(
       (total: any, p: any) => total + p.volumeCredits,
