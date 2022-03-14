@@ -57,5 +57,3 @@ function renderHtml(data: any) {
 
   return result;
 }
-
-console.log(statement(invoices[0], plays));
