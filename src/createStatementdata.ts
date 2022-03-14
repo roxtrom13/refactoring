@@ -34,6 +34,14 @@ class PerformanceCalculator {
     return result;
   }
 
+  get volumeCredits() {
+    let result = 0;
+    result += Math.max(this.performance.audience - 30, 0);
+    if ("comedy" == this.play.type)
+      result += Math.floor(this.performance.audience / 5);
+    return result;
+  }
+
 }
 
 export default function createStatementData(invoice: Invoice, plays: any) {
@@ -44,12 +52,12 @@ export default function createStatementData(invoice: Invoice, plays: any) {
   result.totalVolumeCredits = totalVolumeCredits(result);
   return result;
 
-  function enrichPerformance(aPerformance: Performance) {
-    const result: any = Object.assign({}, aPerformance);
+  function enrichPerformance(aPerformance: Performance): EnrichedPerformance {
     const calculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
+    const result: any = Object.assign({}, aPerformance);
     result.play = calculator.play;
     result.amount = calculator.amount;
-    result.volumeCredits = volumeCreditsFor(result);
+    result.volumeCredits = calculator.volumeCredits;
     return result;
   }
 
@@ -57,13 +65,17 @@ export default function createStatementData(invoice: Invoice, plays: any) {
     return plays[aPerformance.playID];
   }
 
-  function volumeCreditsFor(aPerformance: EnrichedPerformance): number {
-    let result = 0;
-    result += Math.max(aPerformance.audience - 30, 0);
-    if ("comedy" == aPerformance.play.type)
-      result += Math.floor(aPerformance.audience / 5);
-    return result;
-  }
+  // function amountFor(aPerformance: EnrichedPerformance) {
+  //   return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amount;
+  // }
+
+  // function volumeCreditsFor(aPerformance: EnrichedPerformance): number {
+  //   let result = 0;
+  //   result += Math.max(aPerformance.audience - 30, 0);
+  //   if ("comedy" == aPerformance.play.type)
+  //     result += Math.floor(aPerformance.audience / 5);
+  //   return result;
+  // }
 
   function totalVolumeCredits(data: any) {
     return data.performances
